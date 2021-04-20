@@ -1,7 +1,6 @@
 from FeatureExtraction.src.speechFutures import Futures
 import pandas as pd
 import numpy as np
-import openpyxl as op
 
 class SpeechState:
     def __init__(self, sh:pd.DataFrame):

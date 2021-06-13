@@ -12,19 +12,13 @@ def machineLearning(dataset):
 
 def readArff():
     # train_path = sys.argv[1]
-    # test_path = sys.argv[2]
     # train_path = 'data/segment_train.arff'
-    # test_path = 'data/segment_test.arff'
     train_path = 'data/excitement_train.arff'
-    test_path = 'data/excitement_test.arff'
     # train_path = 'data/estimation_train.arff'
-    # test_path = 'data/estimation_test.arff'
     attributeList, trainDataList = readTrainArff(train_path)
-    testDataList = readTestArff(test_path)
     # print('attributeList:', attributeList)
     # print('trainDataList:', trainDataList)
-    # print('testDataList:', testDataList)
-    dataset = Dataset(attributeList, trainDataList, testDataList)
+    dataset = Dataset(attributeList, trainDataList)
     return dataset
 
 def readTrainArff(train_path:str):
@@ -56,21 +50,6 @@ def readTrainArff(train_path:str):
     row_contain_nan = ~np.isnan(np.delete(dataList, -1, 1).astype(float)).any(axis=1)   # 欠損値のある行の検知
     dataList = dataList[row_contain_nan]                                                # 欠損値のある行を消去
     return attributeList, dataList
-
-def readTestArff(test_path:str):
-    dataList:np.ndarray = []
-    test_file = open(test_path)
-    lines = [line.rstrip('\n') for line in test_file]
-    for i, line in enumerate(lines):
-        if(not line.startswith('@attribute') and not line.startswith('@data') and not line.startswith('@relation') and not line.startswith('%')):
-            if(np.size(dataList) == 0):
-                dataList = [line.split(',')]
-            else:
-                dataList = np.insert(dataList, 0, line.split(','), axis=0)
-    dataList = np.where(dataList == '?', np.NaN, dataList)
-    row_contain_nan = ~np.isnan(np.delete(dataList, -1, 1).astype(float)).any(axis=1)
-    dataList = dataList[row_contain_nan]   
-    return dataList
 
 def main():
     dataset = readArff()

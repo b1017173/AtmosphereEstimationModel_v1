@@ -6,13 +6,12 @@ from sklearn import svm, neighbors, naive_bayes, metrics
 
 
 class Dataset():
-    def __init__(self, attributeList:list, trainDataList:np.ndarray, testDataList:np.ndarray):
+    def __init__(self, attributeList:list, trainDataList:np.ndarray):
         self.attributeList = attributeList
         self.trainDataList = trainDataList
-        self.testDataList = testDataList
     
     def convertToScikitDataset(self):
-        self.pandasData = pd.DataFrame(np.concatenate([self.trainDataList, self.trainDataList]), columns=[attr.name for attr in self.attributeList])
+        self.pandasData = pd.DataFrame(self.trainDataList, columns=[attr.name for attr in self.attributeList])
         # print(self.pandasData.shape)
         # print(self.pandasData.keys)
         _scikitDataset = Bunch()

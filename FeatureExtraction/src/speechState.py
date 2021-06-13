@@ -26,19 +26,21 @@ class SpeechState:
   
     # 各発話状態の抽出
     def classificationSpeechStates(self, speech_recording:np.ndarray):
-        self.unspeakline:np.ndarray = []                            # 非発話状態
-        self.speaklines:list = [[], [], [], []]               # 各話者の発話状態
-        self.simultaneous_speaklines:list = [[], [], [], []]   # 同時発話状態
+        self.unspeakline:np.ndarray = []                        # 非発話状態
+        self.speaklines:list = [[], [], [], []]                 # 各話者の発話状態
+        self.simultaneous_speaklines:list = [[], [], [], []]    # 同時発話状態
 
         _prestatus = np.full(4, -1)
         for i in range(np.size(speech_recording, axis=1)):
             _half_second = speech_recording[:, i]
+            # 非発話状態の処理
             if _half_second.sum() == 0:
                 if _prestatus.sum() == 0:
                     self.unspeakline[len(self.unspeakline) - 1] += 0.5
                 else:
                     self.unspeakline = np.append(self.unspeakline, 0.5)
             
+            # 単独発話状態の処理
             for j, value in enumerate(_half_second):
                 if value > 0:
                     if _prestatus[j] > 0:
@@ -46,6 +48,7 @@ class SpeechState:
                     else:
                         self.speaklines[j] = np.append(self.speaklines[j], 0.5)
                     
+                    # 同時発話状態の処理
                     if _half_second.sum() > 1:
                         if _prestatus[j] > 0 and _prestatus.sum() > 1:
                             self.simultaneous_speaklines[j][len(self.simultaneous_speaklines[j]) - 1] += 0.5
@@ -54,7 +57,7 @@ class SpeechState:
 
             _prestatus = _half_second
 
-        # 無音状態の最適化
+        # 非発話状態の最適化
         if speech_recording.sum(axis=0)[0] == 0:
             self.unspeakline = np.delete(self.unspeakline, [0])
         if speech_recording.sum(axis=0)[len(speech_recording.sum(axis=0)) -1] == 0:
@@ -63,3 +66,16 @@ class SpeechState:
         print('非発話状態: ', self.unspeakline)
         print('発話状態: ', self.speaklines)
         print('同時発話状態: ', self.simultaneous_speaklines)
+
+    # 書き出し用に文字列変換
+    def writeData(self, estimation:str):
+        data_str = self.futures.writeFutures()
+        if (estimation == 'excitement' and 1 < self.excitement) or \
+           (estimation == 'seriousness' and 1 < self.seriousness) or \
+           (estimation == 'cheerfulness' and 1 < self.cheerfulness) or \
+           (estimation == 'comfortable' and 1 < self.comfortable):
+            data_str += 'Positive\n'
+        else:
+            data_str += 'Negative\n'
+
+        return data_str

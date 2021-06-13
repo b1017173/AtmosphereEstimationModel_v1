@@ -7,7 +7,7 @@ class Futures:
         _speaklines = speaklines
         _simultaneous_speaklines = simultaneous_speaklines
         self.futures = self.calFutures(_unspeakline, _speaklines, _simultaneous_speaklines)
-        print('futures: ', self.futures)
+        # print('特徴量: ', self.futures)
     
     def calFutures(self, unspeakline:np.ndarray, speaklines:list, simultaneous_speaklines:list) -> np.ndarray:
         _futures = []   # 計算した特徴量を格納していく
@@ -26,21 +26,29 @@ class Futures:
             _all_speakline = np.append(_all_speakline, speakline)
 
         # 発話時間統計特徴の算出
+        ## 非発話状態
         _futures = np.append(_futures, self.calBasicStats(unspeakline, _allstate))
+        ## 単独発話状態
         for speakline in speaklines:
             _futures = np.append(_futures, self.calBasicStats(speakline, _allstate))
+        ## 同時発話状態
         for simultaneous_speakline in simultaneous_speaklines:
             _futures = np.append(_futures, self.calBasicStats(simultaneous_speakline, _allstate))
+        ## 全集合
         _futures = np.append(_futures, self.calBasicStats(_allstate, _allstate))
+        ## 全発話集合
         _futures = np.append(_futures, self.calBasicStats(_all_speakline, _allstate))
 
         # 発話時間比較特徴
+        ## 話者間単独発話比較
         for i in range(len(_two_dimen_allstate) - 1):
             for j in range(i + 1, len(_two_dimen_allstate)):
                 _futures = np.append(_futures, self.calComparison(_two_dimen_allstate[i], _two_dimen_allstate[j], _allstate))
+        ## 話者間同時発話比較
         for i in range(len(speaklines) - 1):
             for j in range(i + 1, len(speaklines)):
                 _futures = np.append(_futures, self.calComparison(speaklines[i], speaklines[j], _allstate))
+        ## 単独注目発話比較(1:その他の比較)
         for i in range(len(speaklines)):
             _other_speakline:list = []
             for j, speakline in enumerate(speaklines):
@@ -48,6 +56,7 @@ class Futures:
                     continue
                 _other_speakline = np.append(_other_speakline, speakline)
             _futures = np.append(_futures, self.calComparison(speaklines[i], _other_speakline, _allstate))
+        ## 話者内発話比較
         for i in range(len(speaklines)):
             _futures = np.append(_futures, self.calComparison(speaklines[i], simultaneous_speaklines[i], _allstate))
 
@@ -79,3 +88,11 @@ class Futures:
                 _comparison = np.append(_comparison, _secondBS[i] / _firstBS[i])
         
         return _comparison
+    
+    # 書き出し用に文字列変換
+    def writeFutures(self):
+        futures_str = ''
+        for future in self.futures:
+            futures_str += '{0},'.format(str(future) if ~np.isnan(future) else '?')
+
+        return futures_str

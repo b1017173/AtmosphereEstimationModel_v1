@@ -13,7 +13,8 @@ def machineLearning(dataset):
 def readArff():
     # train_path = sys.argv[1]
     # train_path = 'data/segment_train.arff'
-    train_path = 'data/excitement_train.arff'
+    # train_path = 'data/excitement_train.arff'
+    train_path = 'data/excitement.arff'
     # train_path = 'data/estimation_train.arff'
     attributeList, trainDataList = readTrainArff(train_path)
     # print('attributeList:', attributeList)
@@ -46,9 +47,10 @@ def readTrainArff(train_path:str):
                 dataList = [line.split(',')]
             else:
                 dataList = np.insert(dataList, 0, line.split(','), axis=0)
-    dataList = np.where(dataList == '?', np.NaN, dataList)                              # 欠損値をnumpy用に置換
-    row_contain_nan = ~np.isnan(np.delete(dataList, -1, 1).astype(float)).any(axis=1)   # 欠損値のある行の検知
-    dataList = dataList[row_contain_nan]                                                # 欠損値のある行を消去
+    dataList = np.where(dataList == '?', 0, dataList)
+    # dataList = np.where(dataList == '?', np.NaN, dataList)                              # 欠損値をnumpy用に置換
+    # row_contain_nan = ~np.isnan(np.delete(dataList, -1, 1).astype(float)).any(axis=1)   # 欠損値のある行の検知
+    # dataList = dataList[row_contain_nan]                                                # 欠損値のある行を消去
     return attributeList, dataList
 
 def main():

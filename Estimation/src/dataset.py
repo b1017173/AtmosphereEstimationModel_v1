@@ -4,7 +4,6 @@ from sklearn.utils import Bunch
 from sklearn.model_selection import train_test_split
 from sklearn import svm, neighbors, naive_bayes, metrics
 
-
 class Dataset():
     def __init__(self, attributeList:list, trainDataList:np.ndarray):
         self.attributeList = attributeList
@@ -18,14 +17,14 @@ class Dataset():
         _scikitDataset['target'] = self.pandasData['class']
         _scikitDataset['data'] = self.pandasData.loc[:, :self.pandasData.columns.values[-2]]
         self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(_scikitDataset['data'], _scikitDataset['target'], random_state=0)
-        # print("X_train shape:", self.X_train.shape)
-        # print("X_test shape:", self.X_test.shape)
+        print("X_train shape:", self.X_train.shape)
+        print("X_test shape:", self.X_test.shape)
 
         return self.X_train, self.X_test, self.Y_train, self.Y_test
 
     def scikitLinearSVC(self, X_train, X_test, Y_train, Y_test):
         print("--- LinearSVC ---")
-        _LSVC = svm.LinearSVC(max_iter=10000)
+        _LSVC = svm.LinearSVC(max_iter=1000000)
         _LSVC.fit(X_train, Y_train)
         _accuracy = _LSVC.score(X_test, Y_test)
         print("正答率", _accuracy)

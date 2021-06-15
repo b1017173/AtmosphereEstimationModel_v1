@@ -10,6 +10,7 @@ class SpeechState:
         self.futures = Futures(self.unspeakline, self.speaklines, self.simultaneous_speaklines)
 
         _speechAtomosphere = sh[7:8].astype(float).to_numpy()
+        print(_speechAtomosphere)
         self.excitement = _speechAtomosphere[0, 0]
         self.seriousness = _speechAtomosphere[0, 1]
         self.cheerfulness = _speechAtomosphere[0, 2]
@@ -58,9 +59,9 @@ class SpeechState:
             _prestatus = _half_second
 
         # 非発話状態の最適化
-        if speech_recording.sum(axis=0)[0] == 0:
+        if speech_recording.sum(axis=0)[0] == 0 and 0 < np.size(self.unspeakline):
             self.unspeakline = np.delete(self.unspeakline, [0])
-        if speech_recording.sum(axis=0)[len(speech_recording.sum(axis=0)) -1] == 0:
+        if speech_recording.sum(axis=0)[len(speech_recording.sum(axis=0)) -1] == 0 and 0 < np.size(self.unspeakline):
             self.unspeakline = np.delete(self.unspeakline, [len(self.unspeakline) - 1])
         
         print('非発話状態: ', self.unspeakline)

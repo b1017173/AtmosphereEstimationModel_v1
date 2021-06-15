@@ -39,7 +39,7 @@ class Futures:
         ## 全発話集合
         _futures = np.append(_futures, self.calBasicStats(_all_speakline, _allstate))
 
-        # 発話時間比較特徴
+        # 発話時間比較特徴の算出
         ## 話者間単独発話比較
         for i in range(len(_two_dimen_allstate) - 1):
             for j in range(i + 1, len(_two_dimen_allstate)):

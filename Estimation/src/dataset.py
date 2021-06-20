@@ -9,8 +9,11 @@ class Dataset():
         self.attributeList = attributeList
         self.trainDataList = trainDataList
     
-    def convertToScikitDataset(self):
+    def convertToScikitDataset(self, selected_futures:list=[]):
         self.pandasData = pd.DataFrame(self.trainDataList, columns=[attr.name for attr in self.attributeList])
+        if len(selected_futures) != len(self.attributeList):
+            selected_futures = [True] * len(self.attributeList)
+        self.pandasData = self.pandasData[selected_futures]
         # print(self.pandasData.shape)
         # print(self.pandasData.keys)
         _scikitDataset = Bunch()

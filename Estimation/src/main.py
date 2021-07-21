@@ -1,14 +1,7 @@
+from scipy.sparse import data
 from attribute import Attribute
 from dataset import Dataset
 import numpy as np
-import pandas as pd
-
-def machineLearning(dataset):
-    X_train, X_test, Y_train, Y_test = dataset.convertToScikitDataset()
-    dataset.scikitLinearSVC(X_train, X_test, Y_train, Y_test)
-    dataset.scikitKNeighborsClassifier(X_train, X_test, Y_train, Y_test)
-    dataset.scikitSVC(X_train, X_test, Y_train, Y_test)
-    dataset.scikitNaiveBayes(X_train, X_test, Y_train, Y_test)
 
 def readArff():
     # train_path = sys.argv[1]
@@ -55,7 +48,7 @@ def readTrainArff(train_path:str):
 
 def main():
     dataset = readArff()
-    machineLearning(dataset)
+    dataset.machineLearning(3)
 
 if __name__ == '__main__':
     main()
